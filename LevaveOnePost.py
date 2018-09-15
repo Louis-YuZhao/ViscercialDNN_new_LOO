@@ -33,9 +33,8 @@ def WriteListtoFile(filelist, filename):
             f.write(i+'\n')
     return 1
 
-def diceComputing():        
-    import CompareThePreandtruth as CTP
-    data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
+def diceComputing(data_path):        
+    import CompareThePreandtruth as CTP    
     ThreeDImageDir = os.path.join (data_path, 'Pred3D', organ + FileType)
     groundTruthDir = os.path.join (data_path, FileType, organ +'_Linear_Labelpatch')
     predictInput = ThreeDImageDir + '/FileList.txt'
@@ -132,6 +131,7 @@ def showlosscurve():
 
 if __name__ == '__main__':
     print organ
-    diceComputing()
+    data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
+    diceComputing(data_path)
 #    diceComputing_full()
     showlosscurve()

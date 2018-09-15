@@ -14,7 +14,7 @@ import SimpleITK as sitk
 #organ = '30325_left_adrenal_gland'
 #organ = '30324_right_adrenal_gland'
 
-datatype = '_MAS'
+fileType = '_MAS'
 IFLeaveOne = True
 leave_one_out_file = 'TrainingDataFull'
 #leave_one_out_file = 'TrainingDataWbCT'
@@ -29,7 +29,7 @@ def ReadFoldandSort(data_path):
     imageList.sort()
     return imageList
 
-def ReadVolumeData(data_path, outputID, outputTitle, dataType): 
+def ReadVolumeData(data_path, outputID, outputTitle, fileType): 
   
     imageList = []
     for fileItem in os.listdir(data_path):
@@ -161,9 +161,8 @@ def load_test_data(tempStore):
     imgs_id_test = np.load(os.path.join(tempStore, 'imgs_id_test.npy'))
     return imgs_test, addInformation_test, imgs_id_test
 
-def main():
-    data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
-    
+def main(data_path):
+   
     tempStore = './tempData_' + organ 
     if not os.path.exists(tempStore):
         subprocess.call('mkdir ' + '-p ' + tempStore, shell=True)
@@ -171,18 +170,16 @@ def main():
     # train part
     train_volume_path = os.path.join(data_path, 'TrainingData', organ+'_Linear_Imagepatch')
     train_label_path = os.path.join(data_path, 'TrainingData', organ+'_Linear_Labelpatch')
-    train_add_path = os.path.join(data_path, 'TrainingData', organ+datatype)
+    train_add_path = os.path.join(data_path, 'TrainingData', organ+fileType)
     create_train_data(train_volume_path, train_label_path, train_add_path, tempStore)
     
     # test part
     test_data_path = os.path.join(data_path, 'TestData', organ+'_Linear_Imagepatch')
-    test_add_path = os.path.join(data_path, 'TestData', organ+datatype)   
+    test_add_path = os.path.join(data_path, 'TestData', organ+fileType)   
     create_test_data(test_data_path, test_add_path, tempStore)
     
-def main_leave_one_out():
-    
-    data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
-    
+def main_leave_one_out(data_path):
+     
     tempStore = './tempData_' + organ 
     if not os.path.exists(tempStore):
         subprocess.call('mkdir ' + '-p ' + tempStore, shell=True)
@@ -190,10 +187,11 @@ def main_leave_one_out():
     # train part
     train_volume_path = os.path.join(data_path, leave_one_out_file, organ+'_Linear_Imagepatch')
     train_label_path = os.path.join(data_path, leave_one_out_file, organ+'_Linear_Labelpatch')
-    train_add_path = os.path.join(data_path, leave_one_out_file, organ+datatype)
+    train_add_path = os.path.join(data_path, leave_one_out_file, organ+fileType)
     create_train_data(train_volume_path, train_label_path, train_add_path, tempStore)
     
 if __name__ == '__main__':
+    data_path = '/home/louis/project/ViscercialDNN_new_LOO'
     if IFLeaveOne != True:
         main()
     else:

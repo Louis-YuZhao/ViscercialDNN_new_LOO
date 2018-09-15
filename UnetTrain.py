@@ -376,7 +376,7 @@ if __name__ == '__main__':
     if IFLeaveOne != True:
         train_and_predict(tempStore, modelPath)
     else:
-        data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
+        data_path = '/home/louis/project/ViscercialDNN_new_LOO/'
         reflist = ReadFoldandSort(os.path.join(data_path, leave_one_out_file, organ + '_Linear_Imagepatch'))
         refImage = reflist[0]
         Reference={}
