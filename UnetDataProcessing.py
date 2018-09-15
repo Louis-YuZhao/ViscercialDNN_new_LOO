@@ -10,7 +10,7 @@ import SimpleITK as sitk
 
 #organ = '29193_first_lumbar_vertebra'
 #organ = '170_pancreas'
-#organ = '187_gallbladder'
+organ = '187_gallbladder'
 #organ = '30325_left_adrenal_gland'
 #organ = '30324_right_adrenal_gland'
 
@@ -29,7 +29,7 @@ def ReadFoldandSort(data_path):
     imageList.sort()
     return imageList
 
-def ReadVolumeData(data_path, outputID, outputTitle, fileType): 
+def ReadVolumeData(data_path, outputID, outputTitle, dataType): 
   
     imageList = []
     for fileItem in os.listdir(data_path):
@@ -193,6 +193,6 @@ def main_leave_one_out(data_path):
 if __name__ == '__main__':
     data_path = '/home/louis/project/ViscercialDNN_new_LOO'
     if IFLeaveOne != True:
-        main()
+        main(data_path)
     else:
-        main_leave_one_out()
+        main_leave_one_out(data_path)
