@@ -33,13 +33,13 @@ def WriteListtoFile(filelist, filename):
             f.write(i+'\n')
     return 1
 
-def diceComputing(data_path):        
+def diceComputing(pr_data_path, gt_data_path):        
     import CompareThePreandtruth as CTP    
-    ThreeDImageDir = os.path.join (data_path, 'Pred3D', organ + FileType)
-    groundTruthDir = os.path.join (data_path, FileType, organ +'_Linear_Labelpatch')
+    ThreeDImageDir = os.path.join (pr_data_path, 'Pred3D', organ + FileType)
+    groundTruthDir = os.path.join (gt_data_path, FileType, organ +'_Linear_Labelpatch')
     predictInput = ThreeDImageDir + '/FileList.txt'
     groundTruthInput = groundTruthDir + '/FileList.txt'
-    predictOutput = os.path.join(data_path, 'Pred3DMod', organ + FileType )
+    predictOutput = os.path.join(pr_data_path, 'Pred3DMod', organ + FileType )
     if not os.path.exists(predictOutput):
         subprocess.call('mkdir ' + '-p ' + predictOutput, shell=True)
     
@@ -92,14 +92,13 @@ def diceComputing(data_path):
     print TPR_Statistics 
 
 
-def diceComputing_full():        
+def diceComputing_full(pr_data_path, gt_data_path):        
     import CompareThePreandtruth as CTP
-    data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
-    ThreeDImageDir = os.path.join (data_path, 'Pred3D', organ + FileType)
-    groundTruthDir = os.path.join (data_path, FileType, organ +'_Linear_Labelpatch')
+    ThreeDImageDir = os.path.join (pr_data_path, 'Pred3D', organ + FileType)
+    groundTruthDir = os.path.join (gt_data_path, FileType, organ +'_Linear_Labelpatch')
     predictInput = ThreeDImageDir + '/FileList.txt'
     groundTruthInput = groundTruthDir + '/FileList.txt'
-    predictOutput = os.path.join(data_path, 'Pred3DMod', organ + FileType)
+    predictOutput = os.path.join(pr_data_path, 'Pred3DMod', organ + FileType)
     if not os.path.exists(predictOutput):
         subprocess.call('mkdir ' + '-p ' + predictOutput, shell=True)
     
@@ -131,7 +130,8 @@ def showlosscurve():
 
 if __name__ == '__main__':
     print organ
-    data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
-    diceComputing(data_path)
-#    diceComputing_full()
+    pr_data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
+    gt_data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
+    diceComputing(pr_data_path, gt_data_path)
+#    diceComputing_full(pr_data_path, gt_data_path)
     showlosscurve()

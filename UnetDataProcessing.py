@@ -14,7 +14,7 @@ organ = '187_gallbladder'
 #organ = '30325_left_adrenal_gland'
 #organ = '30324_right_adrenal_gland'
 
-fileType = '_MAS'
+fileType = '_VPF'
 IFLeaveOne = True
 leave_one_out_file = 'TrainingDataFull'
 #leave_one_out_file = 'TrainingDataWbCT'

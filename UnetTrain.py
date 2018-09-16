@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="2"
 from skimage.transform import resize
 import numpy as np
 import subprocess
@@ -118,106 +118,6 @@ def get_unet_short():
 
     return model
 
-def get_unet_short_BN():
-    inputs = Input((image_rows, image_cols, 1))
-    masks = Input((image_rows, image_cols, 1))
-    conv1 = Conv2D(32, (5, 5), activation='relu', padding='same')(inputs)
-    conv1 = Conv2D(32, (5, 5), activation='relu', padding='same')(conv1)
-    conv1 = BatchNormalization()(conv1)
-    pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
-
-    conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(pool1)
-    conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv2)
-    conv2 = BatchNormalization()(conv2)
-    pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
-
-    conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(pool2)
-    conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv3)
-    conv3 = BatchNormalization()(conv3)
-    pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
-
-    conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(pool3)
-    conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv6)
-    conv6 = BatchNormalization()(conv6)
-
-    up7 = concatenate([Conv2DTranspose(128, (2, 2), strides=(2, 2), padding='same')(conv6), conv3], axis=3)
-    conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(up7)
-    conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv7)
-    conv7 = BatchNormalization()(conv7)
-
-    up8 = concatenate([Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='same')(conv7), conv2], axis=3)
-    conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(up8)
-    conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv8)
-    conv8 = BatchNormalization()(conv8)
-
-    up9 = concatenate([Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(conv8), conv1], axis=3)
-    conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(up9)
-    conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv9)
-    conv9 = Conv2D(1, (1, 1), activation='sigmoid')(conv9)
-
-    conv10Block1 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv9)
-    conv10Block2 = Conv2D(32, (3, 3), activation='relu', padding='same')(masks)
-    conv11 = concatenate([conv10Block1, conv10Block2], axis=3)
-    conv11 = BatchNormalization()(conv11)
-
-    conv12 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv11)
-    conv12 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv12)
-    conv12 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv12)
-    conv12 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv12)
-    conv12 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv12)
-
-    conv13 = Conv2D(1, (1, 1), activation='sigmoid')(conv12)
-
-    model = Model(inputs=[inputs, masks], outputs=[conv13])
-
-    model.compile(optimizer=Adam(lr=learningRate), loss=dice_coef_loss, metrics=[dice_coef])
-    return model
-
-def get_unet_short_dense():
-    inputs = Input((image_rows, image_cols, 1))
-    masks = Input((image_rows, image_cols, 1))
-    conv1 = Conv2D(32, (5, 5), activation='relu', padding='same')(inputs)
-    conv1 = Conv2D(32, (5, 5), activation='relu', padding='same')(conv1)
-    pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
-
-    conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(pool1)
-    conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv2)
-    pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
-
-    conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(pool2)
-    conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv3)
-    pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
-
-    conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(pool3)
-    conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv6)
-
-    up7 = concatenate([Conv2DTranspose(128, (2, 2), strides=(2, 2), padding='same')(conv6), conv3], axis=3)
-    conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(up7)
-    conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv7)
-
-    up8 = concatenate([Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='same')(conv7), conv2], axis=3)
-    conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(up8)
-    conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv8)
-
-    up9 = concatenate([Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(conv8), conv1], axis=3)
-    conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(up9)
-    conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv9)
-    conv9 = Conv2D(1, (1, 1), activation='sigmoid')(conv9)
-
-    conv10Block1 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv9)
-    conv10Block2 = Conv2D(32, (3, 3), activation='relu', padding='same')(masks)
-    conv11 = concatenate([conv10Block1, conv10Block2], axis=3)
-
-    conv12,_ = dense_block(conv11, 5, 32, 32, dropout_rate=None, weight_decay=1E-4)
-    conv12 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv12)
-    
-    conv13 = Conv2D(1, (1, 1), activation='sigmoid')(conv12)
-
-    model = Model(inputs=[inputs, masks], outputs=[conv13])
-
-    model.compile(optimizer=Adam(lr=learningRate), loss=dice_coef_loss, metrics=[dice_coef])
-
-    return model
 
 def preprocess(imgs):
     imgs_p = np.ndarray((imgs.shape[0], image_rows, image_cols), dtype=np.float32)
@@ -376,8 +276,9 @@ if __name__ == '__main__':
     if IFLeaveOne != True:
         train_and_predict(tempStore, modelPath)
     else:
-        data_path = '/home/louis/project/ViscercialDNN_new_LOO/'
-        reflist = ReadFoldandSort(os.path.join(data_path, leave_one_out_file, organ + '_Linear_Imagepatch'))
+        input_data_path = '/home/louis/project/ViscercialDNN_new_LOO/'
+        output_data_path = '/home/louis/project/ViscercialDNN_new_LOO/'
+        reflist = ReadFoldandSort(os.path.join(input_data_path, leave_one_out_file, organ + '_Linear_Imagepatch'))
         refImage = reflist[0]
         Reference={}
         refImage = sitk.ReadImage(refImage)
@@ -385,7 +286,7 @@ if __name__ == '__main__':
         Reference['spacing'] = refImage.GetSpacing()
         Reference['direction'] = refImage.GetDirection()
     
-        ThreeDImageDir = os.path.join (data_path, 'Pred3D', organ + leave_one_out_file)
+        ThreeDImageDir = os.path.join (output_data_path, 'Pred3D', organ + leave_one_out_file)
         if not os.path.exists(ThreeDImageDir):
             subprocess.call('mkdir ' + '-p ' + ThreeDImageDir, shell=True)
         train_leave_one_out(tempStore, modelPath, ThreeDImageDir, Reference)
