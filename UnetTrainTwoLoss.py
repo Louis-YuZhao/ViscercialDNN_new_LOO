@@ -162,9 +162,9 @@ def train_leave_one_out(tempStore, modelPath, testOutputDir, Reference, config):
 
     imgs_train, imgs_label_train, addInformation_train, imgs_id_train = load_train_data(tempStore)
 
-    imgs_train = preprocess(imgs_train)
-    imgs_label_train = preprocess(imgs_label_train)
-    addInformation_train = preprocess(addInformation_train)
+    imgs_train = preprocess(imgs_train, image_rows, image_cols)
+    imgs_label_train = preprocess(imgs_label_train, image_rows, image_cols)
+    addInformation_train = preprocess(addInformation_train, image_rows, image_cols)
 
     imgs_train = imgs_train.astype('float32')
 
@@ -243,7 +243,7 @@ def main(input_data_path, output_data_path, config):
     ThreeDImageDir = os.path.join(output_data_path, 'Pred3D', organ + leave_one_out_file)
     if not os.path.exists(ThreeDImageDir):
         subprocess.call('mkdir ' + '-p ' + ThreeDImageDir, shell=True)
-    train_leave_one_out(tempStore, modelPath, ThreeDImageDir, Reference)
+    train_leave_one_out(tempStore, modelPath, ThreeDImageDir, Reference, config)
 
 if __name__ == '__main__':
     input_data_path = './'
