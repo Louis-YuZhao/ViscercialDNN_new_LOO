@@ -235,8 +235,8 @@ def  main(input_data_path, output_data_path, config):
     train_leave_one_out(tempStore, modelPath, ThreeDImageDir, Reference, config)
 
 if __name__ == '__main__':    
-    input_data_path = './'
-    output_data_path = '../OneLoss'
+    input_data_path = os.getcwd()
+    output_data_path = os.path.join(os.path.abspath(os.path.dirname(os.getcwd())),'OneLoss')
     if not os.path.exists(output_data_path):
         subprocess.call('mkdir ' + '-p ' + output_data_path, shell=True)
     for config in organList：
