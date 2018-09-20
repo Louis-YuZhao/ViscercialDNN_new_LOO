@@ -232,7 +232,7 @@ def main(input_data_path, output_data_path, config):
     if not os.path.exists(modelPath):
         subprocess.call('mkdir ' + '-p ' + modelPath, shell=True)
 
-    reflist = ReadFoldandSort(os.path.join(data_path, leave_one_out_file, organ + '_Linear_Imagepatch'))
+    reflist = ReadFoldandSort(os.path.join(input_data_path, leave_one_out_file, organ + '_Linear_Imagepatch'))
     refImage = reflist[0]
     Reference={}
     refImage = sitk.ReadImage(refImage)
@@ -240,7 +240,7 @@ def main(input_data_path, output_data_path, config):
     Reference['spacing'] = refImage.GetSpacing()
     Reference['direction'] = refImage.GetDirection()
 
-    ThreeDImageDir = os.path.join(data_path, 'Pred3D', organ + leave_one_out_file)
+    ThreeDImageDir = os.path.join(output_data_path, 'Pred3D', organ + leave_one_out_file)
     if not os.path.exists(ThreeDImageDir):
         subprocess.call('mkdir ' + '-p ' + ThreeDImageDir, shell=True)
     train_leave_one_out(tempStore, modelPath, ThreeDImageDir, Reference)
@@ -250,5 +250,5 @@ if __name__ == '__main__':
     output_data_path = '../TwoLoss'
     if not os.path.exists(output_data_path):
         subprocess.call('mkdir ' + '-p ' + output_data_path, shell=True)
-    for config in organList：
+    for config in organList:
         main(input_data_path, output_data_path, config)
