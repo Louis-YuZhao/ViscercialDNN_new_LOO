@@ -8,23 +8,30 @@ import os
 import subprocess
 import matplotlib.pyplot as plt
 #%%
-preThreshold = 0.5
 groundThreshold = 0.02
+
+numLoss = 'one'
+numLoss = 'two'
 
 FileType = 'TrainingDataFull'
 #FileType = 'TrainingDataWbCT'
 #FileType = 'TrainingDataCeCT'
 
-#organ = '29193_first_lumbar_vertebra'
-#CTwb = 19
-# organ = '170_pancreas'
-# CTwb = 19
+organ = '170_pancreas'
+CTwb = 19
+preThreshold = 0.5
+
 # organ = '187_gallbladder'
 # CTwb = 18
+# preThreshold = 0.5
+
 # organ = '30325_left_adrenal_gland'
 # CTwb = 15
-organ = '30324_right_adrenal_gland'
-CTwb = 14
+# preThreshold = 0.5
+
+# organ = '30324_right_adrenal_gland'
+# CTwb = 14
+# preThreshold = 0.5
 
 #%%
 def WriteListtoFile(filelist, filename):
@@ -91,36 +98,8 @@ def diceComputing(pr_data_path, gt_data_path):
     TPR_Statistics['min'] = np.amin(CTceTPR)
     print TPR_Statistics 
 
-
-def diceComputing_full(pr_data_path, gt_data_path):        
-    import CompareThePreandtruth as CTP
-    ThreeDImageDir = os.path.join (pr_data_path, 'Pred3D', organ + FileType)
-    groundTruthDir = os.path.join (gt_data_path, FileType, organ +'_Linear_Labelpatch')
-    predictInput = ThreeDImageDir + '/FileList.txt'
-    groundTruthInput = groundTruthDir + '/FileList.txt'
-    predictOutput = os.path.join(pr_data_path, 'Pred3DMod', organ + FileType)
-    if not os.path.exists(predictOutput):
-        subprocess.call('mkdir ' + '-p ' + predictOutput, shell=True)
-    
-    dicorestat = CTP.CompareThePreandTruth(predictInput, groundTruthInput)
-    dicorestat.readPredictImagetoList()
-    dicorestat.readgroundTruthtoList()
-    Filelist = dicorestat.predictModification(predictOutput, preThreshold)
-    Filelist.sort()
-    WriteListtoFile(Filelist, os.path.join(predictOutput,"FileList.txt"))
-    print('-'*30)
-    print('printing the DSC...')
-    print('-'*30)
-    dicorestat.diceScoreStatistics()
-    print('-'*30)
-    print('printing the TPR...')
-    print('-'*30)
-    dicorestat.TPRStatistics()
-
 def showlosscurve():
     tempStore = './tempData_' + organ
-#    loss = np.load(os.path.join(tempStore,'loss.npy'))
-#    val_loss = np.load(os.path.join(tempStore,'val_loss.npy'))
     loss = np.load(os.path.join(tempStore,'10000020_1_CT_loss.npy'))
     val_loss = np.load(os.path.join(tempStore,'10000020_1_CT_val_loss.npy')) 
     plt.plot(loss)
@@ -130,8 +109,10 @@ def showlosscurve():
 
 if __name__ == '__main__':
     print organ
-    pr_data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
-    gt_data_path = '/media/data/louis/ProgramWorkResult/ViscercialDNN_new_LOO/'
+    pr_data_path = '../'
+    if numLoss == 'one':
+        gt_data_path = '../OneLoss'
+    elif numLoss == 'two':
+        gt_data_path = '../TwoLoss'
     diceComputing(pr_data_path, gt_data_path)
-#    diceComputing_full(pr_data_path, gt_data_path)
     showlosscurve()
