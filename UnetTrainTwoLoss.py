@@ -43,7 +43,7 @@ organdict['image_rows'] = 72
 organdict['image_cols'] = 120
 organdict['learningRate'] = learningRate
 organdict['batch_size'] = batch_size
-organdict['epochs'] = 100
+organdict['epochs'] = 1
 organList.append(organdict)
 
 organdict['organ'] = '187_gallbladder'
@@ -52,7 +52,7 @@ organdict['image_rows'] = 80
 organdict['image_cols'] = 80
 organdict['learningRate'] = learningRate
 organdict['batch_size'] = batch_size
-organdict['epochs'] = 100
+organdict['epochs'] = 1
 organList.append(organdict)
 
 organdict['organ'] = '30325_left_adrenal_gland'
@@ -61,7 +61,7 @@ organdict['image_rows'] = 56
 organdict['image_cols'] = 40
 organdict['learningRate'] = learningRate
 organdict['batch_size'] = batch_size
-organdict['epochs'] = 100
+organdict['epochs'] = 1
 organList.append(organdict)
 
 organdict['organ'] = '30324_right_adrenal_gland'
@@ -70,7 +70,7 @@ organdict['image_rows'] = 64
 organdict['image_cols'] = 48
 organdict['learningRate'] = learningRate
 organdict['batch_size'] = batch_size
-organdict['epochs'] = 100
+organdict['epochs'] = 1
 organList.append(organdict)
 
 def dice_coef(y_true, y_pred):
@@ -97,15 +97,8 @@ def get_unet_short_twoloss(image_rows, image_cols, learningRate):
     conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(pool2)
     conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv3)
     pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
-
-    conv4 = Conv2D(256, (3, 3), activation='relu', padding='same')(pool3)
-    conv4 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv4)
-   
-    conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(conv4)
-    conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(conv5)
-
-    up6 = concatenate([conv5, conv4], axis=3)
-    conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(up6)
+  
+    conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(pool3)
     conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv6)
 
     up7 = concatenate([Conv2DTranspose(128, (2, 2), strides=(2, 2), padding='same')(conv6), conv3], axis=3)
