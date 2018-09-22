@@ -10,9 +10,10 @@ from sklearn.metrics import f1_score
 class CompareThePreandTruth(object):
     """ class for multi atlas segmentation base on elastix """
     
-    def __init__(self, predictListdir, groundTruthListdir):
+    def __init__(self, predictListdir, groundTruthList):
         self.predictListdir = predictListdir
-        self.groundTruthListdir = groundTruthListdir
+        self.groundTruthList = groundTruthList
+        self.groundTruthListdir = None
         
     def readPredictImagetoList(self):
         """
@@ -102,9 +103,9 @@ class CompareThePreandTruth(object):
         dice_Statistics['std'] = np.std(diceScore)
         dice_Statistics['max'] = np.amax(diceScore)
         dice_Statistics['min'] = np.amin(diceScore)
-        print diceScore
-        print "DICE:"
-        print dice_Statistics
+        print (diceScore)
+        print ("DICE:")
+        print (dice_Statistics)
         return diceScore
         
     def TPRStatistics(self):
@@ -132,6 +133,6 @@ class CompareThePreandTruth(object):
         TPR_Statistics['std'] = np.std(TPR)
         TPR_Statistics['max'] = np.amax(TPR)
         TPR_Statistics['min'] = np.amin(TPR)
-        print "TPR:"
-        print TPR_Statistics    
+        print ("TPR:")
+        print (TPR_Statistics)    
         return TPR

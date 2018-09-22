@@ -70,7 +70,7 @@ def diceComputing(pr_data_path, gt_data_path):
     dice_Statistics['std'] = np.std(wbCTDiceScore)
     dice_Statistics['max'] = np.amax(wbCTDiceScore)
     dice_Statistics['min'] = np.amin(wbCTDiceScore)
-    print dice_Statistics    
+    print (dice_Statistics)    
     
     CTceDiceScore = diceScore[CTwb:]
     dice_Statistics = {}
@@ -78,7 +78,7 @@ def diceComputing(pr_data_path, gt_data_path):
     dice_Statistics['std'] = np.std(CTceDiceScore)
     dice_Statistics['max'] = np.amax(CTceDiceScore)
     dice_Statistics['min'] = np.amin(CTceDiceScore)
-    print dice_Statistics 
+    print (dice_Statistics) 
     
     
     print('-'*30)
@@ -91,7 +91,7 @@ def diceComputing(pr_data_path, gt_data_path):
     TPR_Statistics['std'] = np.std(wbCTTPR)
     TPR_Statistics['max'] = np.amax(wbCTTPR)
     TPR_Statistics['min'] = np.amin(wbCTTPR)
-    print TPR_Statistics    
+    print (TPR_Statistics)    
     
     CTceTPR = TPR[CTwb:]
     TPR_Statistics = {}
@@ -99,7 +99,7 @@ def diceComputing(pr_data_path, gt_data_path):
     TPR_Statistics['std'] = np.std(CTceTPR)
     TPR_Statistics['max'] = np.amax(CTceTPR)
     TPR_Statistics['min'] = np.amin(CTceTPR)
-    print TPR_Statistics 
+    print (TPR_Statistics) 
 
 def showlosscurve():
     tempStore = './tempData_' + organ
@@ -111,7 +111,7 @@ def showlosscurve():
     plt.show()
 
 if __name__ == '__main__':
-    print organ
+    print (organ)
     gt_data_path = os.path.abspath(os.path.dirname(os.getcwd()))
     if numLoss == 'one':
         pr_data_path = os.path.join(os.path.abspath(os.path.dirname(os.getcwd())),'OneLoss')
