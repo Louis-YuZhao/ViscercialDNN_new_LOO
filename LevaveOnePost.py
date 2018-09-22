@@ -7,6 +7,7 @@ import numpy as np
 import os
 import subprocess
 import matplotlib.pyplot as plt
+from UnetDataProcessing import ReadFoldandSort
 #%%
 groundThreshold = 0.02
 
@@ -45,7 +46,9 @@ def diceComputing(pr_data_path, gt_data_path):
     ThreeDImageDir = os.path.join (pr_data_path, 'Pred3D', organ + FileType)
     groundTruthDir = os.path.join (gt_data_path, FileType, organ +'_Linear_Labelpatch')
     predictInput = ThreeDImageDir + '/FileList.txt'
-    groundTruthInput = groundTruthDir + '/FileList.txt'
+    groundTruthInput = ReadFoldandSort(groundTruthDir)
+    for i in groundTruthInput:
+        print i
     predictOutput = os.path.join(pr_data_path, 'Pred3DMod', organ + FileType )
     if not os.path.exists(predictOutput):
         subprocess.call('mkdir ' + '-p ' + predictOutput, shell=True)
@@ -109,10 +112,10 @@ def showlosscurve():
 
 if __name__ == '__main__':
     print organ
-    pr_data_path = '../'
+    gt_data_path = os.path.abspath(os.path.dirname(os.getcwd()))
     if numLoss == 'one':
-        gt_data_path = '../OneLoss'
+        pr_data_path = os.path.join(os.path.abspath(os.path.dirname(os.getcwd())),'OneLoss')
     elif numLoss == 'two':
-        gt_data_path = '../TwoLoss'
+        pr_data_path = os.path.join(os.path.abspath(os.path.dirname(os.getcwd())),'TwoLoss')
     diceComputing(pr_data_path, gt_data_path)
     showlosscurve()
