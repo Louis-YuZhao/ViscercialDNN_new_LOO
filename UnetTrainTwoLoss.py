@@ -24,10 +24,12 @@ K.set_image_data_format('channels_last')  # TF dimension ordering in this code
 IFLeaveOne = True
 smooth = 1.
 IfglobalNorm = False
+modelReload = True
 
 learningRate = 1e-5
 batch_size = 50
 patience = 20
+epochs = 100
 loss_weights=[1, 0.1]
 
 leave_one_out_file = 'TrainingDataFull'
@@ -46,7 +48,7 @@ organdict1['image_rows'] = 72
 organdict1['image_cols'] = 120
 organdict1['learningRate'] = learningRate
 organdict1['batch_size'] = batch_size
-organdict1['epochs'] = 100
+organdict1['epochs'] = epochs
 organList.append(organdict1)
 
 organdict2['organ'] = '187_gallbladder'
@@ -55,7 +57,7 @@ organdict2['image_rows'] = 80
 organdict2['image_cols'] = 80
 organdict2['learningRate'] = learningRate
 organdict2['batch_size'] = batch_size
-organdict2['epochs'] = 100
+organdict2['epochs'] = epochs
 organList.append(organdict2)
 
 organdict3['organ'] = '30325_left_adrenal_gland'
@@ -64,7 +66,7 @@ organdict3['image_rows'] = 56
 organdict3['image_cols'] = 40
 organdict3['learningRate'] = learningRate
 organdict3['batch_size'] = batch_size
-organdict3['epochs'] = 100
+organdict3['epochs'] = epochs
 organList.append(organdict3)
 
 organdict4['organ'] = '30324_right_adrenal_gland'
@@ -73,7 +75,7 @@ organdict4['image_rows'] = 64
 organdict4['image_cols'] = 48
 organdict4['learningRate'] = learningRate
 organdict4['batch_size'] = batch_size
-organdict4['epochs'] = 100
+organdict4['epochs'] = epochs
 organList.append(organdict4)
 
 def dice_coef(y_true, y_pred):
@@ -84,7 +86,6 @@ def dice_coef(y_true, y_pred):
 
 def dice_coef_loss(y_true, y_pred):
     return -dice_coef(y_true, y_pred)
-
 
 def get_unet_short_twoloss(image_rows, image_cols, learningRate):
     inputs = Input((image_rows, image_cols, 1))
@@ -191,12 +192,13 @@ def train_leave_one_out(tempStore, modelPath, testOutputDir, Reference, config):
         model_checkpoint = ModelCheckpoint(weightName, monitor='val_loss', save_best_only=True)
         early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=patience, verbose=0, mode='auto')
 
+        if (modelReload == True) and os.path.exists(weightName):
+            model.load_weights(weightName)
+
         train_history = model.fit([currentTrainImgs, currentTrainAdd], [currentTrainLab,currentTrainLab], batch_size,\
         epochs, verbose=1, shuffle=True, validation_split=0.2,\
         callbacks=[model_checkpoint,early_stop])
         
-        # model.save_weights(weightName)
-
         loss = train_history.history['loss']
         val_loss = train_history.history['val_loss']
         np.save(tempStore + '/' + outBaseName + '_loss.npy',loss)
@@ -210,7 +212,6 @@ def train_leave_one_out(tempStore, modelPath, testOutputDir, Reference, config):
         imgs_label_test, _ = model.predict([currentTestImgs,currentTestAdd], verbose=1)
         ThreeDImagePath = VolumeDataTofiles(imgs_label_test, outBaseName, testOutputDir, Reference)
         preImageList.append(ThreeDImagePath)    
-        # np.save(tempStore + '/' + outBaseName + '_imgs_label_test.npy', imgs_label_test)
 
         print('-'*30)
         print(str(i) + 'th is finished...')
