@@ -16,8 +16,7 @@ from keras import backend as K
 
 from UnetDataProcessing import load_train_data, load_test_data, ReadFoldandSort
 from UnetPostProcessing import VolumeDataTofiles, WriteListtoFile
-from densenet_fast import dense_block
-
+#from densenet_fast import dense_block
 
 K.set_image_data_format('channels_last')  # TF dimension ordering in this code
 
@@ -36,42 +35,46 @@ leave_one_out_file = 'TrainingDataFull'
 #leave_one_out_file = 'TrainingDataCeCT'
 
 organList = []
-organdict = dict()
-organdict['organ'] = '170_pancreas'
-organdict['sliceNum'] = 80
-organdict['image_rows'] = 72
-organdict['image_cols'] = 120
-organdict['learningRate'] = learningRate
-organdict['batch_size'] = batch_size
-organdict['epochs'] = 1
-organList.append(organdict)
+organdict1 = dict()
+organdict2 = dict()
+organdict3 = dict()
+organdict4 = dict()
 
-organdict['organ'] = '187_gallbladder'
-organdict['sliceNum'] = 80
-organdict['image_rows'] = 80
-organdict['image_cols'] = 80
-organdict['learningRate'] = learningRate
-organdict['batch_size'] = batch_size
-organdict['epochs'] = 1
-organList.append(organdict)
+organdict1['organ'] = '170_pancreas'
+organdict1['sliceNum'] = 80
+organdict1['image_rows'] = 72
+organdict1['image_cols'] = 120
+organdict1['learningRate'] = learningRate
+organdict1['batch_size'] = batch_size
+organdict1['epochs'] = 100
+organList.append(organdict1)
 
-organdict['organ'] = '30325_left_adrenal_gland'
-organdict['sliceNum'] = 40
-organdict['image_rows'] = 56
-organdict['image_cols'] = 40
-organdict['learningRate'] = learningRate
-organdict['batch_size'] = batch_size
-organdict['epochs'] = 1
-organList.append(organdict)
+organdict2['organ'] = '187_gallbladder'
+organdict2['sliceNum'] = 80
+organdict2['image_rows'] = 80
+organdict2['image_cols'] = 80
+organdict2['learningRate'] = learningRate
+organdict2['batch_size'] = batch_size
+organdict2['epochs'] = 100
+organList.append(organdict2)
 
-organdict['organ'] = '30324_right_adrenal_gland'
-organdict['sliceNum'] = 104
-organdict['image_rows'] = 64
-organdict['image_cols'] = 48
-organdict['learningRate'] = learningRate
-organdict['batch_size'] = batch_size
-organdict['epochs'] = 1
-organList.append(organdict)
+organdict3['organ'] = '30325_left_adrenal_gland'
+organdict3['sliceNum'] = 40
+organdict3['image_rows'] = 56
+organdict3['image_cols'] = 40
+organdict3['learningRate'] = learningRate
+organdict3['batch_size'] = batch_size
+organdict3['epochs'] = 100
+organList.append(organdict3)
+
+organdict4['organ'] = '30324_right_adrenal_gland'
+organdict4['sliceNum'] = 104
+organdict4['image_rows'] = 64
+organdict4['image_cols'] = 48
+organdict4['learningRate'] = learningRate
+organdict4['batch_size'] = batch_size
+organdict4['epochs'] = 100
+organList.append(organdict4)
 
 def dice_coef(y_true, y_pred):
     y_true_f = K.flatten(y_true)
@@ -109,7 +112,7 @@ def get_unet_short_twoloss(image_rows, image_cols, learningRate):
     conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(up8)
     conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv8)
 
-    up9 = concatenate([Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(conv8), conv1], axis=3)#organ = '170_pancreas'
+    up9 = concatenate([Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(conv8), conv1], axis=3)
     conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(up9)
     conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv9)
     conv9out = Conv2D(1, (1, 1), activation='sigmoid')(conv9)
@@ -218,6 +221,7 @@ def train_leave_one_out(tempStore, modelPath, testOutputDir, Reference, config):
 def main(input_data_path, output_data_path, config):
 
     organ = config['organ']
+    print (organ)
     tempStore = './tempData_' + organ
     modelPath = './model_' + organ
     if not os.path.exists(tempStore):
@@ -243,5 +247,8 @@ if __name__ == '__main__':
     output_data_path = os.path.join(os.path.abspath(os.path.dirname(os.getcwd())),'TwoLoss')
     if not os.path.exists(output_data_path):
         subprocess.call('mkdir ' + '-p ' + output_data_path, shell=True)
+    
+    #main(input_data_path, output_data_path, organList[0])
     for config in organList:
         main(input_data_path, output_data_path, config)
+

@@ -49,7 +49,7 @@ class CompareThePreandTruth(object):
     def thresholdModification(self, InputImageList, result_dir, threshold = 10**(-2)):
         outputlist = []
         N = len(InputImageList)
-        for i in xrange(N):
+        for i in range(N):
             image = sitk.ReadImage(InputImageList[i])
             image_array = sitk.GetArrayFromImage(image) # get numpy array
 
@@ -86,7 +86,7 @@ class CompareThePreandTruth(object):
         self.listLength = len(self.predictList)
         
         diceScore = np.zeros((self.listLength,))
-        for i in xrange(self.listLength):
+        for i in range(self.listLength):
             
             ImgroundTruth = sitk.ReadImage(self.groundTruthList[i])
             TmGT_array = sitk.GetArrayFromImage(ImgroundTruth)
@@ -116,7 +116,7 @@ class CompareThePreandTruth(object):
         self.listLength = len(self.predictList)        
         
         TPR = np.zeros((self.listLength,))
-        for i in xrange(self.listLength):
+        for i in range(self.listLength):
             
             ImgroundTruth = sitk.ReadImage(self.groundTruthList[i])
             TmGT_array = sitk.GetArrayFromImage(ImgroundTruth)

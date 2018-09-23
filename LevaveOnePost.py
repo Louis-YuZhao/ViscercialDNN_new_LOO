@@ -18,21 +18,21 @@ FileType = 'TrainingDataFull'
 #FileType = 'TrainingDataWbCT'
 #FileType = 'TrainingDataCeCT'
 
-organ = '170_pancreas'
-CTwb = 19
+#organ = '170_pancreas'
+#CTwb = 19
+#preThreshold = 0.5
+
+#organ = '187_gallbladder'
+#CTwb = 18
+#preThreshold = 0.5
+
+#organ = '30325_left_adrenal_gland'
+#CTwb = 15
+#preThreshold = 0.5
+
+organ = '30324_right_adrenal_gland'
+CTwb = 14
 preThreshold = 0.5
-
-# organ = '187_gallbladder'
-# CTwb = 18
-# preThreshold = 0.5
-
-# organ = '30325_left_adrenal_gland'
-# CTwb = 15
-# preThreshold = 0.5
-
-# organ = '30324_right_adrenal_gland'
-# CTwb = 14
-# preThreshold = 0.5
 
 #%%
 def WriteListtoFile(filelist, filename):
@@ -48,14 +48,13 @@ def diceComputing(pr_data_path, gt_data_path):
     predictInput = ThreeDImageDir + '/FileList.txt'
     groundTruthInput = ReadFoldandSort(groundTruthDir)
     for i in groundTruthInput:
-        print i
+        print (i)
     predictOutput = os.path.join(pr_data_path, 'Pred3DMod', organ + FileType )
     if not os.path.exists(predictOutput):
         subprocess.call('mkdir ' + '-p ' + predictOutput, shell=True)
     
     dicorestat = CTP.CompareThePreandTruth(predictInput, groundTruthInput)
     dicorestat.readPredictImagetoList()
-    dicorestat.readgroundTruthtoList()
     Filelist = dicorestat.predictModification(predictOutput, preThreshold)
     Filelist.sort()
     WriteListtoFile(Filelist, os.path.join(predictOutput,"FileList.txt"))
@@ -118,4 +117,4 @@ if __name__ == '__main__':
     elif numLoss == 'two':
         pr_data_path = os.path.join(os.path.abspath(os.path.dirname(os.getcwd())),'TwoLoss')
     diceComputing(pr_data_path, gt_data_path)
-    showlosscurve()
+    #showlosscurve()
